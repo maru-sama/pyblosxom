@@ -474,6 +474,8 @@ import codecs
 import sys
 import subprocess
 import traceback
+import urllib
+import hashlib
 
 from email.MIMEText import MIMEText
 from xml.sax.saxutils import escape
@@ -676,7 +678,7 @@ def read_file(filename, config):
             cmt['cmt_optionally_linked_author'] = link
         else:
             cmt['cmt_optionally_linked_author'] = cmt['cmt_author']
-
+        cmt['cmt_gravatar'] = get_gravatar(cmt.get('cmt_email',''))
     return cmts
 
 def write_comment(request, config, data, comment, encoding):
@@ -1142,7 +1144,7 @@ class AjaxRenderer(blosxom.Renderer):
         """
         if self._ajax_type == 'preview' and template_name == 'comment-preview':
             return True
-        elif (self._ajax_type == 'post' and template_name == 'comment-form' 
+        elif (self._ajax_type == 'post' and template_name == 'comment-form'
               and round(self._data.get('cmt_time', 0)) == round(entry['cmt_time'])):
             return True
         else:
@@ -1313,6 +1315,7 @@ def build_preview_comment(form, entry, config):
 
         if 'email' in form:
             c['cmt_email'] = form['email'].value
+        c['cmt_gravatar'] = get_gravatar(c.get('cmt_email',''))
 
     except KeyError, e:
         c['cmt_error'] = 'Missing value: %s' % e
@@ -1357,3 +1360,15 @@ def cb_story_end(args):
         args['template'] = template + "".join(output)
 
     return template
+
+
+def get_gravatar(email):
+
+    AVATAR_URL = "http://www.gravatar.com/avatar/"
+    if not email:
+        email = "nouser@nomail.com"
+
+    gravatar_url = "%s%s?%s" % (AVATAR_URL,
+        hashlib.md5(email.lower()).hexdigest(),
+        urllib.urlencode({'s':40, 'd':'identicon'}))
+    return gravatar_url
