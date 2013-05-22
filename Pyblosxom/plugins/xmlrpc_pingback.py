@@ -137,6 +137,7 @@ def fileFor(req, uri):
 
 
 def pingback(request, source, target):
+    pyhttp = request.get_http()
     logger = tools.get_logger()
     logger.info("pingback started")
     source_file = urllib.urlopen(source.split('#')[0])
@@ -180,7 +181,8 @@ def pingback(request, source, target):
            'pubDate': str(time.time()),
            'link': source,
            'source': '',
-           'description': body}
+           'description': body,
+           'ipaddress': pyhttp.get('REMOTE_ADDR', '')}
 
     # run anti-spam plugins
     argdict = {"request": request, "comment": cmt}
