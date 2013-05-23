@@ -126,8 +126,9 @@ def cb_handle(args):
     This takes in a request and handles the request.
     """
     request = args["request"]
-    pyhttp = request.getHttp()
-    config = request.getConfiguration()
+    response = request.get_response()
+    pyhttp = request.get_http()
+    config = request.get_configuration()
 
     urltrigger = config.get("xmlrpc_urltrigger", "/RPC")
 
@@ -140,13 +141,9 @@ def cb_handle(args):
                 raise ValueError, 'Request too large - %s bytes' % content_length
 
         except:
-            response = xmlrpclib.dumps(xmlrpclib.Fault(1, "%s: %s" % sys.exc_info()[:2]))
-            resp_str = ('Content-Type: text/xml\n') + \
-                       ('Content-Length: %d\n\n' % len(response)) + \
-                       response
-
-            sys.stdout.write(resp_str)
-            sys.stdout.flush()
+            resp = xmlrpclib.dumps(xmlrpclib.Fault(1, "%s: %s" % sys.exc_info()[:2]))
+            response.add_header('Content-Type', 'text/xml')
+            response.write(resp_str)
             return 1
 
         # everything is cool--so we handle the xmlrpc request
