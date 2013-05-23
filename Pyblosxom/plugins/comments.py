@@ -1370,5 +1370,5 @@ def get_gravatar(email):
 
     gravatar_url = "%s%s?%s" % (AVATAR_URL,
         hashlib.md5(email.lower()).hexdigest(),
-        urllib.urlencode({'s':40, 'd':'identicon'}))
+        urllib.urlencode({'d':'identicon'}))
     return gravatar_url
