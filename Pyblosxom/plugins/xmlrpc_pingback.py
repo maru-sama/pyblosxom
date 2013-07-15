@@ -111,7 +111,8 @@ def fileFor(req, uri):
 
     # We get our path here
     path = uri.replace(config['base_url'], '')
-    req.add_http({'PATH_INFO': path, "form": {}})
+    req.add_http({'PATH_INFO': path})
+    req._form = {}
     from Pyblosxom.pyblosxom import blosxom_process_path_info
     blosxom_process_path_info({'request': req})
 
@@ -136,6 +137,7 @@ def fileFor(req, uri):
 
 
 def pingback(request, source, target):
+    pyhttp = request.get_http()
     logger = tools.get_logger()
     logger.info("pingback started")
     source_file = urllib.urlopen(source.split('#')[0])
@@ -179,7 +181,8 @@ def pingback(request, source, target):
            'pubDate': str(time.time()),
            'link': source,
            'source': '',
-           'description': body}
+           'description': body,
+           'ipaddress': pyhttp.get('REMOTE_ADDR', '')}
 
     # run anti-spam plugins
     argdict = {"request": request, "comment": cmt}
@@ -193,13 +196,13 @@ def pingback(request, source, target):
     if reject_code == 1:
         raise Fault(0x0031, reject_message)
 
-    from comments import writeComment
+    from comments import write_comment
     config = request.get_configuration()
     data = request.get_data()
     data['entry_list'] = [target_entry]
 
     # TODO: Check if comment from the URL exists
-    writeComment(request, config, data, cmt, config['blog_encoding'])
+    write_comment(request, config, data, cmt, config['blog_encoding'])
 
     return "success pinging %s from %s\n" % (target, source)
 
