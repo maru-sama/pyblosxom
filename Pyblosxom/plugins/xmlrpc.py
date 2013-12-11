@@ -141,7 +141,7 @@ def cb_handle(args):
                 raise ValueError, 'Request too large - %s bytes' % content_length
 
         except:
-            resp = xmlrpclib.dumps(xmlrpclib.Fault(1, "%s: %s" % sys.exc_info()[:2]))
+            resp_str = xmlrpclib.dumps(xmlrpclib.Fault(1, "%s: %s" % sys.exc_info()[:2]))
             response.add_header('Content-Type', 'text/xml')
             response.write(resp_str)
             return 1
