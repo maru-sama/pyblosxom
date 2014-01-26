@@ -17,13 +17,15 @@ This module also holds a generic generate_entry function which will generate
 a BaseEntry with data that you provide for it.
 """
 
-import time, locale
+import time
+import locale
 from Pyblosxom import tools
 
 BIGNUM = 2000000000
 CONTENT_KEY = "body"
 DOESNOTEXIST = "THISKEYDOESNOTEXIST"
 DOESNOTEXIST2 = "THISKEYDOESNOTEXIST2"
+
 
 class EntryBase:
     """
@@ -33,12 +35,14 @@ class EntryBase:
     somewhere off the InterWeeb.
 
     EntryBase derivatives are dict-like except for one key difference:
-    when doing ``__getitem__`` on a nonexistent key, it returns an
-    empty string.  For example:
+    when doing ``__getitem__`` on a nonexistent key, it returns None by
+    default.  For example:
 
-    >>> entry["some_nonexistent_key"]
-    ""
+    >>> entry = EntryBase('some fake request')
+    >>> None == entry["some_nonexistent_key"]
+    True
     """
+
     def __init__(self, request):
         self._data = ""
         self._metadata = dict(tools.STANDARD_FILTERS)
@@ -48,7 +52,7 @@ class EntryBase:
 
     def __repr__(self):
         """
-        Returns a friendly debuggable representation of self. Useful
+        Returns a friendly debug-able representation of self. Useful
         to know on what entry pyblosxom fails on you (though unlikely)
 
         :returns: Identifiable representation of object
@@ -67,7 +71,7 @@ class EntryBase:
         return self._id
 
     getId = tools.deprecated_function(get_id)
-    
+
     def get_data(self):
         """
         Returns the data string.  This method should be overridden to

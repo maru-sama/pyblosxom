@@ -1,3 +1,6 @@
+.. image:: https://api.travis-ci.org/pyblosxom/pyblosxom.png
+   :target: https://travis-ci.org/pyblosxom/pyblosxom
+
 =================
  About Pyblosxom
 =================
