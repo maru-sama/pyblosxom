@@ -474,6 +474,8 @@ import codecs
 import sys
 import subprocess
 import traceback
+import urllib
+import hashlib
 
 from email.MIMEText import MIMEText
 from xml.sax.saxutils import escape
@@ -682,7 +684,7 @@ def read_file(filename, config):
             cmt['cmt_optionally_linked_author'] = link
         else:
             cmt['cmt_optionally_linked_author'] = cmt['cmt_author']
-
+        cmt['cmt_gravatar'] = get_gravatar(cmt.get('cmt_email',''))
     return cmts
 
 
@@ -1343,6 +1345,7 @@ def build_preview_comment(form, entry, config):
 
         if 'email' in form:
             c['cmt_email'] = form['email'].value
+        c['cmt_gravatar'] = get_gravatar(c.get('cmt_email',''))
 
     except KeyError, e:
         c['cmt_error'] = 'Missing value: %s' % e
@@ -1388,3 +1391,15 @@ def cb_story_end(args):
         args['template'] = template + "".join(output)
 
     return template
+
+
+def get_gravatar(email):
+
+    AVATAR_URL = "http://www.gravatar.com/avatar/"
+    if not email:
+        email = "nouser@nomail.com"
+
+    gravatar_url = "%s%s?%s" % (AVATAR_URL,
+        hashlib.md5(email.lower()).hexdigest(),
+        urllib.urlencode({'d':'identicon'}))
+    return gravatar_url
