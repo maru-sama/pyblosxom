@@ -862,6 +862,10 @@ def send_email(config, entry, comment, comment_dir, comment_filename):
         else:
             assert 'comment_smtp_server' in config
             server = smtplib.SMTP(config['comment_smtp_server'])
+            if config['comment_smtp_username']:
+                server.starttls()
+                server.login(config['comment_smtp_username'],
+                             config['comment_smtp_password'])
             mimemsg = MIMEText("\n".join(message).encode("utf-8"), 'plain', 'utf-8')
 
             # set the message headers
