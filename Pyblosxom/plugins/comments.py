@@ -862,7 +862,7 @@ def send_email(config, entry, comment, comment_dir, comment_filename):
         else:
             assert 'comment_smtp_server' in config
             server = smtplib.SMTP(config['comment_smtp_server'])
-            if config['comment_smtp_username']:
+            if 'comment_smtp_username' in config:
                 server.starttls()
                 server.login(config['comment_smtp_username'],
                              config['comment_smtp_password'])
