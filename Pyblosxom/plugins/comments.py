@@ -1364,7 +1364,7 @@ def cb_story_end(args):
 
 def get_gravatar(email):
 
-    AVATAR_URL = "http://www.gravatar.com/avatar/"
+    AVATAR_URL = "https://www.gravatar.com/avatar/"
     if not email:
         email = "nouser@nomail.com"
 
